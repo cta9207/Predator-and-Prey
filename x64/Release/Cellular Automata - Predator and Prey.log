@@ -1,0 +1,17 @@
+﻿  Simulation.cpp
+Simulation.cpp(29): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+Simulation.cpp(30): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+  Start.cpp
+Simulation.obj : error LNK2001: unresolved external symbol glfwSwapBuffers
+Simulation.obj : error LNK2001: unresolved external symbol glfwSetFramebufferSizeCallback
+Simulation.obj : error LNK2001: unresolved external symbol glfwGetKey
+Simulation.obj : error LNK2001: unresolved external symbol glfwTerminate
+Simulation.obj : error LNK2001: unresolved external symbol glfwPollEvents
+Simulation.obj : error LNK2001: unresolved external symbol glfwInit
+Simulation.obj : error LNK2001: unresolved external symbol glfwSetWindowShouldClose
+Simulation.obj : error LNK2001: unresolved external symbol glfwCreateWindow
+Simulation.obj : error LNK2001: unresolved external symbol glfwWindowHint
+Simulation.obj : error LNK2001: unresolved external symbol glfwMakeContextCurrent
+Simulation.obj : error LNK2001: unresolved external symbol glfwGetProcAddress
+Simulation.obj : error LNK2001: unresolved external symbol glfwWindowShouldClose
+C:\Users\cta9207\Desktop\Cellular-Automata-Predator-vs.-Prey\Cellular Automata - Predator and Prey\x64\Release\Cellular Automata - Predator and Prey.exe : fatal error LNK1120: 12 unresolved externals
