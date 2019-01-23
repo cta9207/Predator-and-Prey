@@ -15,22 +15,24 @@ void processInput(GLFWwindow* window)
 	}
 }
 
-//Initializes openGL
+//Initializes OpenGL
 Simulation::Simulation(int width, int height, const char* title)
 {
 	screenWidth = width;
 	screenHeight = height;
-
+	//Initializes glfw
 	if (!glfwInit())
 	{
 		cerr << "GLFW failed to initialize" << endl;
 		return;
 	}
 
+	//Sets what version of OpenGL will be used
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3.0);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3.0);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
+	
+	//Creates window and makes it current context
 	window = glfwCreateWindow(width, height, title, NULL, NULL);
 	if (window == NULL)
 	{
@@ -39,13 +41,17 @@ Simulation::Simulation(int width, int height, const char* title)
 	}
 	glfwMakeContextCurrent(window);
 
+	//Loads GLAD (Glad loads OpenGL functions)
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
 		cerr << "GLAD loading failed" << endl;
 		return;
 	}
+
+	//Creates viewport on window where simulation will be rendered
 	glViewport(0, 0, width, height);
 
+	//Sets function to be called when resizing window
 	glfwSetFramebufferSizeCallback(window, framebufferResize);
 
 	//Gets compiled shader program from text files
@@ -79,12 +85,17 @@ Simulation::Simulation(int width, int height, const char* title)
 //Renders game board
 void Simulation::render()
 {
+
 	processInput(window);
 
+	//Loads shader and vertex array for loadin square
 	useShader();
 	glBindVertexArray(VAO);
 	
+	//The clock below is used for debugging purposes to see how much time it takes to render a frame
 	renderTimeStart = clock();
+	
+	//Draws each cell in gameboard vector onto buffer window
 	for (int y = 0; y < screenHeight; y++)
 	{
 		for (int x = 0; x < screenWidth; x++)
@@ -96,13 +107,16 @@ void Simulation::render()
 	}
 	cout << "Complete render: " << float(clock() - renderTimeStart) << endl;
 
+	//Swaps buffer window to actual window once rendering is complete and vice versa
 	glfwSwapBuffers(window);
+	//Gets mouse or keyboard input
 	glfwPollEvents();
 }
 
-//Shader Stuff
+//Loads shaders from files and processes it into shader program
 void Simulation::getShaderProgram(string vertexPath,string fragmentPath)
 {
+	//Loading shaders from files
 	ifstream vertexFile, fragmentFile;
 	vertexFile.open(vertexPath);
 	fragmentFile.open(fragmentPath);
@@ -117,25 +131,31 @@ void Simulation::getShaderProgram(string vertexPath,string fragmentPath)
 	const char* vertexSource = vertexBuffer.c_str();
 	const char* fragmentSource = fragmentBuffer.c_str();
 
+	//Creates glshader programs for vertex shader and fragment shader
 	unsigned int vertex{ glCreateShader(GL_VERTEX_SHADER) }, fragment{glCreateShader(GL_FRAGMENT_SHADER)};
 
+	//Links code soure with vertex and fragment shader
 	glShaderSource(vertex, 1, &vertexSource, NULL);
 	glShaderSource(fragment, 1, &fragmentSource, NULL);
 
+	//Compiles the source code into each shader program
 	glCompileShader(vertex);
 	glCompileShader(fragment);
 
+	//Creates shader ID and links both shader programs under the shader ID
 	shaderID = glCreateProgram();
 	glAttachShader(shaderID, vertex);
 	glAttachShader(shaderID, fragment);
 	glLinkProgram(shaderID);
 
+	//Deletes vertex and fragment shader for extra space
 	glDeleteShader(vertex);
 	glDeleteShader(fragment);
 }
 
 void Simulation::useShader()
 {
+	//Tells GPU which shader to use
 	glUseProgram(shaderID);
 }
 
@@ -162,6 +182,7 @@ void Simulation::run()
 		}
 	}
 
+	//Creates rendering information for each cell
 	glm::mat4 scaleModel;
 	scaleModel = glm::scale(scaleModel, glm::vec3((float)2 / screenWidth,(float)2 / screenHeight, 0.0f));
 	for (int y = 0; y < screenHeight; y++)
@@ -183,8 +204,10 @@ void Simulation::run()
 	}
 }
 
+//Simulates one "step" in simulation
 void Simulation::Step()
 {
+	//Loops through every cell on board and tells cell where to move, if they should reproduce, or if they should die
 	for (int y = 0; y < screenHeight; y++)
 	{
 		for (int x = 0; x < screenWidth; x++)
@@ -264,5 +287,6 @@ void Simulation::Step()
 
 Simulation::~Simulation()
 {
+	//Stops OpenGL processes
 	glfwTerminate();
 }
